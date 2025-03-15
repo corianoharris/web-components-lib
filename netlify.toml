@@ -1,0 +1,8 @@
+[build]
+  command = "pnpm run build-storybook"
+  publish = "storybook-static"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
