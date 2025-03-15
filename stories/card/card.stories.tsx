@@ -2,8 +2,6 @@
 
 import type { Meta, StoryObj } from "@storybook/react"
 import { useEffect } from "react"
-import "./card"
-import "../button/button"
 
 const meta = {
   title: "Components/Card",
@@ -27,15 +25,18 @@ const CardWrapper = (args: any) => {
   useEffect(() => {
     // Ensure the custom elements are defined
     if (!customElements.get("ui-card")) {
-      import("./card")
+      import("../../components/card/card")
     }
     if (!customElements.get("ui-button")) {
-      import("../button/button")
+      import("../../components/button/button")
     }
   }, [])
 
   return (
+
+     // @ts-ignore
     <div style={{ width: "300px" }}>
+     { /* @ts-ignore */}
       <ui-card variant={args.variant} hover={args.hover ? "true" : null}>
         <h3 slot="header" style={{ margin: 0, fontSize: "1.125rem", fontWeight: 500 }}>
           {args.title || "Card Title"}
@@ -45,10 +46,13 @@ const CardWrapper = (args: any) => {
             "This is a card component with header and footer slots. You can customize its appearance using the variant and hover attributes."}
         </div>
         <div slot="footer" style={{ display: "flex", justifyContent: "flex-end" }}>
+          { /* @ts-ignore */}
           <ui-button size="small" variant={args.variant === "outlined" ? "outline" : "secondary"}>
             {args.buttonText || "Action"}
+            { /* @ts-ignore */}
           </ui-button>
         </div>
+        { /* @ts-ignore */}
       </ui-card>
     </div>
   )

@@ -1,11 +1,28 @@
+interface SizeStyle {
+  width: string
+  height?: string
+  margin?: string
+  borderRadius?: string
+}
+
 export class ModalComponent extends HTMLElement {
   private closeButton: HTMLButtonElement | null = null
   private backdrop: HTMLDivElement | null = null
   private dialog: HTMLDivElement | null = null
 
+  // Store bound methods to properly remove event listeners
+  private boundHandleClose: (event?: Event) => void
+  private boundHandleBackdropClick: (event: MouseEvent) => void
+  private boundHandleKeyDown: (event: KeyboardEvent) => void
+
   constructor() {
     super()
     this.attachShadow({ mode: "open" })
+
+    // Bind methods once to ensure we can properly remove event listeners
+    this.boundHandleClose = this.handleClose.bind(this)
+    this.boundHandleBackdropClick = this.handleBackdropClick.bind(this)
+    this.boundHandleKeyDown = this.handleKeyDown.bind(this)
   }
 
   static get observedAttributes() {
@@ -13,67 +30,84 @@ export class ModalComponent extends HTMLElement {
   }
 
   connectedCallback() {
+    console.log("Modal connected", this.hasAttribute("open"))
     this.render()
     this.setupEventListeners()
+
+    // Ensure initial state is correct
+    if (this.hasAttribute("open")) {
+      this.open()
+    } else {
+      this.close()
+    }
   }
 
   disconnectedCallback() {
     this.removeEventListeners()
   }
 
-  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-    if (name === "open" && oldValue !== newValue) {
-      if (newValue === null) {
-        this.close()
-      } else {
+  attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
+    console.log(`Attribute changed: ${name}`, oldValue, newValue)
+    if (name === "open") {
+      if (newValue !== null) {
         this.open()
+      } else {
+        this.close()
       }
-    } else {
-      this.render()
     }
+    this.render()
   }
 
   setupEventListeners() {
     if (this.shadowRoot) {
+      // Query elements after rendering
       this.closeButton = this.shadowRoot.querySelector(".modal-close")
       this.backdrop = this.shadowRoot.querySelector(".modal-backdrop")
       this.dialog = this.shadowRoot.querySelector(".modal-dialog")
 
       if (this.closeButton) {
-        this.closeButton.addEventListener("click", this.handleClose.bind(this))
+        console.log("Adding close button listener")
+        this.closeButton.addEventListener("click", this.boundHandleClose)
+      } else {
+        console.error("Close button not found")
       }
 
       if (this.backdrop) {
-        this.backdrop.addEventListener("click", this.handleBackdropClick.bind(this))
+        this.backdrop.addEventListener("click", this.boundHandleBackdropClick)
       }
 
-      document.addEventListener("keydown", this.handleKeyDown.bind(this))
+      document.addEventListener("keydown", this.boundHandleKeyDown)
     }
   }
 
   removeEventListeners() {
     if (this.closeButton) {
-      this.closeButton.removeEventListener("click", this.handleClose.bind(this))
+      this.closeButton.removeEventListener("click", this.boundHandleClose)
     }
-
     if (this.backdrop) {
-      this.backdrop.removeEventListener("click", this.handleBackdropClick.bind(this))
+      this.backdrop.removeEventListener("click", this.boundHandleBackdropClick)
     }
-
-    document.removeEventListener("keydown", this.handleKeyDown.bind(this))
+    document.removeEventListener("keydown", this.boundHandleKeyDown)
   }
 
-  handleClose() {
+  handleClose(event?: Event) {
+    console.log("Modal close clicked")
+    if (event) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
     this.removeAttribute("open")
     this.dispatchEvent(
       new CustomEvent("ui-close", {
         bubbles: true,
         composed: true,
+        detail: { source: "modal" },
       }),
     )
   }
 
   handleBackdropClick(event: MouseEvent) {
+    console.log("Backdrop clicked", event.target, this.backdrop)
     if (event.target === this.backdrop) {
       this.handleClose()
     }
@@ -81,20 +115,21 @@ export class ModalComponent extends HTMLElement {
 
   handleKeyDown(event: KeyboardEvent) {
     if (event.key === "Escape" && this.hasAttribute("open")) {
+      console.log("Escape pressed")
       this.handleClose()
     }
   }
 
   open() {
+    console.log("Opening modal")
     document.body.style.overflow = "hidden"
     if (this.dialog) {
-      setTimeout(() => {
-        if (this.dialog) this.dialog.classList.add("open")
-      }, 10)
+      this.dialog.classList.add("open")
     }
   }
 
   close() {
+    console.log("Closing modal")
     document.body.style.overflow = ""
     if (this.dialog) {
       this.dialog.classList.remove("open")
@@ -105,7 +140,7 @@ export class ModalComponent extends HTMLElement {
     const open = this.hasAttribute("open")
     const size = this.getAttribute("size") || "medium"
 
-    const sizeStyles = {
+    const sizeStyles: Record<string, SizeStyle> = {
       small: {
         width: "300px",
       },
@@ -123,14 +158,21 @@ export class ModalComponent extends HTMLElement {
       },
     }
 
-    const currentSize = sizeStyles[size as keyof typeof sizeStyles] || sizeStyles.medium
+    const currentSize = sizeStyles[size] || sizeStyles.medium
 
     if (this.shadowRoot) {
       this.shadowRoot.innerHTML = `
         <style>
           :host {
-            display: ${open ? "block" : "none"};
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            display: ${open ? "flex" : "none"};
+            align-items: center;
+            justify-content: center;
           }
           
           .modal-backdrop {
@@ -139,33 +181,24 @@ export class ModalComponent extends HTMLElement {
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
+            background-color: rgba(0, 0, 0, 0.2);
           }
           
           .modal-dialog {
-            background-color: white;
+            position: relative;
+            background-color: #ffffff;
             border-radius: 0.5rem;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             max-width: 90%;
-            max-height: 90%;
+            max-height: 90vh;
             display: flex;
             flex-direction: column;
-            opacity: 0;
-            transform: scale(0.95);
-            transition: opacity 0.2s ease, transform 0.2s ease;
             width: ${currentSize.width};
             ${currentSize.height ? `height: ${currentSize.height};` : ""}
             ${currentSize.margin ? `margin: ${currentSize.margin};` : ""}
             ${currentSize.borderRadius ? `border-radius: ${currentSize.borderRadius};` : ""}
-          }
-          
-          .modal-dialog.open {
-            opacity: 1;
-            transform: scale(1);
+            overflow: hidden;
+            z-index: 1001;
           }
           
           .modal-header {
@@ -216,36 +249,41 @@ export class ModalComponent extends HTMLElement {
               width: 100%;
               max-width: 100%;
               max-height: 100%;
-              border-radius: 0;
               margin: 0;
+              border-radius: 0;
             }
           }
         </style>
         
-        <div class="modal-backdrop">
-          <div class="modal-dialog ${open ? "open" : ""}">
-            <div class="modal-header">
-              <slot name="header">
-                <h3 class="modal-title">Modal Title</h3>
-              </slot>
-              <button class="modal-close" aria-label="Close">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </button>
-            </div>
-            <div class="modal-body">
-              <slot></slot>
-            </div>
-            <div class="modal-footer">
-              <slot name="footer"></slot>
-            </div>
+        <div class="modal-backdrop"></div>
+        <div class="modal-dialog">
+          <div class="modal-header">
+            <slot name="header">
+              <h3 class="modal-title">Modal Title</h3>
+            </slot>
+            <button class="modal-close" aria-label="Close">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+          <div class="modal-body">
+            <slot></slot>
+          </div>
+          <div class="modal-footer">
+            <slot name="footer"></slot>
           </div>
         </div>
       `
+
+      // Re-query elements after rendering
+      this.setupEventListeners()
     }
   }
 }
 
-customElements.define("ui-modal", ModalComponent)
+
+  customElements.define("ui-modal", ModalComponent)
+
 

@@ -1,9 +1,7 @@
 "use client"
 
 import type { Meta, StoryObj } from "@storybook/react"
-import { useEffect, useState } from "react"
-import "./modal"
-import "../button/button"
+import { useEffect, useState, useRef } from "react"
 
 const meta = {
   title: "Components/Modal",
@@ -23,39 +21,81 @@ const meta = {
 export default meta
 type Story = StoryObj
 
-const ModalDemo = (args: any) => {
+const ModalDemo = (args: any) =>
+{
   const [isOpen, setIsOpen] = useState(args.open)
+  const modalRef = useRef<HTMLElement | null>(null)
 
-  useEffect(() => {
-    // Ensure the custom elements are defined
-    if (!customElements.get("ui-modal")) {
-      import("./modal")
-    }
-    if (!customElements.get("ui-button")) {
-      import("../button/button")
-    }
+  useEffect(() =>
+  {
+    // Import components
+    Promise.all([import("../../components/modal/modal"), import("../../components/button/button")]).catch(console.error)
+  }, [])
 
-    // Setup event listener for ui-close event
-    const handleClose = () => {
+  // Update isOpen when the control changes
+  useEffect(() =>
+  {
+    console.log("Args open changed:", args.open)
+    setIsOpen(args.open)
+  }, [args.open])
+
+  // Handle button click to open modal
+  const handleButtonClick = () =>
+  {
+    console.log("Button clicked, opening modal")
+    setIsOpen(true)
+  }
+
+  // Handle modal close
+  const handleModalClose = () =>
+  {
+    console.log("Modal closing from button click")
+    setIsOpen(false)
+  }
+
+  useEffect(() =>
+  {
+    // Listen for ui-close event from the modal
+    const handleClose = (e: any) =>
+    {
+      console.log("ui-close event received", e.detail)
       setIsOpen(false)
     }
 
     document.addEventListener("ui-close", handleClose)
-    return () => {
+
+    return () =>
+    {
       document.removeEventListener("ui-close", handleClose)
     }
   }, [])
 
-  useEffect(() => {
-    setIsOpen(args.open)
-  }, [args.open])
+  // Update modal attribute when isOpen changes
+  useEffect(() =>
+  {
+    console.log("isOpen changed:", isOpen)
+    if (modalRef.current)
+    {
+      if (isOpen)
+      {
+        modalRef.current.setAttribute("open", "true")
+      } else
+      {
+        modalRef.current.removeAttribute("open")
+      }
+    }
+  }, [isOpen, modalRef])
 
   return (
-    <div>
-      <ui-button onClick={() => setIsOpen(true)}>Open Modal</ui-button>
-
-      <ui-modal open={isOpen ? "true" : null} size={args.size}>
-        <h3 slot="header">{args.title || "Modal Title"}</h3>
+    <div style={{ width: "100%", height: "400px", position: "relative" }}>
+      {/* @ts-ignore */}
+      {isOpen === false ? <ui-button onClick={handleButtonClick}>Open Modal</ui-button> : null}
+      {/* @ts-ignore */}
+      <ui-modal
+        ref={modalRef}
+        size={args.size}
+      >
+        <h3 slot="header">{args.title || "Default Modal"}</h3>
         <div style={{ minHeight: "100px" }}>
           {args.children || (
             <>
@@ -67,11 +107,15 @@ const ModalDemo = (args: any) => {
           )}
         </div>
         <div slot="footer">
-          <ui-button variant="outline" onClick={() => setIsOpen(false)} style={{ marginRight: "8px" }}>
+          {/* @ts-ignore */}
+          <ui-button variant="outline" onClick={handleModalClose} style={{ marginRight: "8px" }}>
             Cancel
+            {/* @ts-ignore */}
           </ui-button>
-          <ui-button onClick={() => setIsOpen(false)}>Confirm</ui-button>
+          {/* @ts-ignore */}
+          <ui-button onClick={handleModalClose}>Confirm</ui-button>
         </div>
+        {/* @ts-ignore */}
       </ui-modal>
     </div>
   )
@@ -171,4 +215,3 @@ export const InitiallyOpen: Story = {
     title: "Initially Open Modal",
   },
 }
-

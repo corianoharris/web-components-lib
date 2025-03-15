@@ -2,7 +2,6 @@
 
 import type { Meta, StoryObj } from "@storybook/react"
 import { useEffect } from "react"
-import "./button"
 
 const meta = {
   title: "Components/Button",
@@ -32,7 +31,7 @@ const ButtonWrapper = (args: any) => {
   useEffect(() => {
     // Ensure the custom element is defined
     if (!customElements.get("ui-button")) {
-      import("./button")
+      import("../../components/button/button")
     }
 
     // Setup event listener for ui-click event
@@ -49,6 +48,7 @@ const ButtonWrapper = (args: any) => {
   }, [args.onClick])
 
   return (
+    // @ts-ignore
     <ui-button
       variant={args.variant}
       size={args.size}
@@ -56,6 +56,7 @@ const ButtonWrapper = (args: any) => {
       loading={args.loading ? "true" : null}
     >
       {args.children || "Button"}
+      {/* @ts-ignore */}
     </ui-button>
   )
 }

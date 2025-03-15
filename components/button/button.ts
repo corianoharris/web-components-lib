@@ -2,6 +2,7 @@ export class ButtonComponent extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: "open" })
+    this.addEventListener("click", this.handleClick.bind(this))
   }
 
   static get observedAttributes() {
@@ -22,13 +23,14 @@ export class ButtonComponent extends HTMLElement {
   }
 
   handleClick(event: Event) {
+    // Prevent click if disabled or loading
     if (this.hasAttribute("disabled") || this.hasAttribute("loading")) {
       event.preventDefault()
       event.stopPropagation()
       return
     }
 
-    // Dispatch a custom event
+    // Dispatch a custom event that can be handled by the parent
     this.dispatchEvent(
       new CustomEvent("ui-click", {
         bubbles: true,
@@ -167,5 +169,7 @@ export class ButtonComponent extends HTMLElement {
   }
 }
 
-customElements.define("ui-button", ButtonComponent)
+if (!customElements.get("ui-button")) {
+  customElements.define("ui-button", ButtonComponent)
+}
 

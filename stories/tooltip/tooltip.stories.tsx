@@ -2,8 +2,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react"
 import { useEffect } from "react"
-import "./tooltip"
-import "../button/button"
+
 
 const meta = {
   title: "Components/Tooltip",
@@ -33,17 +32,20 @@ const TooltipWrapper = (args: any) => {
   useEffect(() => {
     // Ensure the custom elements are defined
     if (!customElements.get("ui-tooltip")) {
-      import("./tooltip")
+      import("../../components/tooltip/tooltip")
     }
     if (!customElements.get("ui-button")) {
-      import("../button/button")
+      import("../../components/button/button")
     }
   }, [])
 
   return (
+    // @ts-ignore
     <ui-tooltip position={args.position} arrow-position={args["arrow-position"]} delay={args.delay?.toString()}>
+      { /* @ts-ignore */}
       <ui-button variant={args.buttonVariant || "primary"}>{args.buttonText || "Hover Me"}</ui-button>
       <span slot="content">{args.content || "This is a tooltip"}</span>
+      { /* @ts-ignore */}
     </ui-tooltip>
   )
 }

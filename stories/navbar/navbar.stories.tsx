@@ -2,7 +2,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react"
 import { useEffect } from "react"
-import "./navbar"
+
 
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction
 const meta = {
@@ -21,11 +21,12 @@ const NavbarWrapper = (args: any) => {
   useEffect(() => {
     // Ensure the custom element is defined
     if (!customElements.get("ui-navbar")) {
-      import("./navbar")
+      import("../../components/navbar/navbar")
     }
   }, [])
 
   return (
+    // @ts-ignore
     <ui-navbar {...args}>
       <span slot="brand">Acme Inc</span>
       <div slot="links">
@@ -45,6 +46,7 @@ const NavbarWrapper = (args: any) => {
       <div slot="right">
         <button className="px-3 py-1 bg-blue-500 text-white rounded">Sign In</button>
       </div>
+      {/* @ts-ignore */}
     </ui-navbar>
   )
 }
