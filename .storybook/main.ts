@@ -15,6 +15,11 @@ const config: StorybookConfig = {
     "name": "@storybook/experimental-nextjs-vite",
     "options": {}
   },
+  "docs": {
+    "defaultName": "Web Components Library",
+    "autodocs": "tag"
+  },
+
   "staticDirs": [
     "../public"
   ]
