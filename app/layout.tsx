@@ -3,9 +3,8 @@ import "./globals.css"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Web Components Storybook",
+  title: "Web Components Library",
   description: "Universal web components that work across frameworks",
-    generator: 'v0.dev'
 }
 
 export default function RootLayout({

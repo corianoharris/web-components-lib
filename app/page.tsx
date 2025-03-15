@@ -9,19 +9,23 @@ import "../components/card/card"
 import "../components/modal/modal"
 import "../components/tooltip/tooltip"
 
-export default function Home() {
+export default function Home()
+{
   const [modalOpen, setModalOpen] = useState(false)
   const [theme, setTheme] = useState("light")
 
   // Handle custom events from web components
-  useEffect(() => {
-    const handleButtonClick = (e: Event) => {
+  useEffect(() =>
+  {
+    const handleButtonClick = (e: Event) =>
+    {
       console.log("Button clicked:", e)
     }
 
     document.addEventListener("ui-click", handleButtonClick)
 
-    return () => {
+    return () =>
+    {
       document.removeEventListener("ui-click", handleButtonClick)
     }
   }, [])
@@ -34,6 +38,7 @@ export default function Home() {
       <section className="mb-12">
         <h2 className="text-2xl font-semibold mb-4">Navbar Component</h2>
         <div className="border rounded-lg overflow-hidden mb-4">
+          { /* @ts-ignore */}
           <ui-navbar logo="/placeholder.svg?height=30&width=30" theme={theme}>
             <span slot="brand">Acme Inc</span>
             <div slot="links">
@@ -53,6 +58,7 @@ export default function Home() {
             <div slot="right">
               <button className="px-3 py-1 bg-blue-500 text-white rounded">Sign In</button>
             </div>
+            { /* @ts-ignore */}
           </ui-navbar>
         </div>
         <div className="flex gap-2 mb-4">
@@ -69,19 +75,29 @@ export default function Home() {
       <section className="mb-12">
         <h2 className="text-2xl font-semibold mb-4">Button Component</h2>
         <div className="flex flex-wrap gap-4 mb-4">
+          { /* @ts-ignore */}
           <ui-button variant="primary">Primary Button</ui-button>
+          { /* @ts-ignore */}
           <ui-button variant="secondary">Secondary Button</ui-button>
+          { /* @ts-ignore */}
           <ui-button variant="danger">Danger Button</ui-button>
+          { /* @ts-ignore */}
           <ui-button variant="outline">Outline Button</ui-button>
+          { /* @ts-ignore */}
           <ui-button variant="ghost">Ghost Button</ui-button>
         </div>
         <div className="flex flex-wrap gap-4 mb-4">
+          { /* @ts-ignore */}
           <ui-button size="small">Small Button</ui-button>
+          { /* @ts-ignore */}
           <ui-button size="medium">Medium Button</ui-button>
+          { /* @ts-ignore */}
           <ui-button size="large">Large Button</ui-button>
         </div>
         <div className="flex flex-wrap gap-4">
+          { /* @ts-ignore */}
           <ui-button disabled>Disabled Button</ui-button>
+          { /* @ts-ignore */}
           <ui-button loading>Loading Button</ui-button>
         </div>
       </section>
@@ -90,38 +106,49 @@ export default function Home() {
       <section className="mb-12">
         <h2 className="text-2xl font-semibold mb-4">Card Component</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          { /* @ts-ignore */}
           <ui-card>
             <h3 slot="header" className="text-lg font-medium">
               Default Card
             </h3>
             <p>This is a default card component with header and footer slots.</p>
             <div slot="footer" className="flex justify-end">
+              { /* @ts-ignore */}
               <ui-button size="small">Action</ui-button>
             </div>
+            { /* @ts-ignore */}
           </ui-card>
 
+          { /* @ts-ignore */}
           <ui-card variant="outlined" hover>
             <h3 slot="header" className="text-lg font-medium">
               Outlined Card
             </h3>
             <p>This is an outlined card with hover effect enabled.</p>
             <div slot="footer" className="flex justify-end">
+              { /* @ts-ignore */}
               <ui-button size="small" variant="outline">
                 Action
+                { /* @ts-ignore */}
               </ui-button>
             </div>
+            { /* @ts-ignore */}
           </ui-card>
 
+          { /* @ts-ignore */}
           <ui-card variant="elevated">
             <h3 slot="header" className="text-lg font-medium">
               Elevated Card
             </h3>
             <p>This is an elevated card with more pronounced shadow.</p>
             <div slot="footer" className="flex justify-end">
+              { /* @ts-ignore */}
               <ui-button size="small" variant="secondary">
                 Action
+                { /* @ts-ignore */}
               </ui-button>
             </div>
+            { /* @ts-ignore */}
           </ui-card>
         </div>
       </section>
@@ -130,9 +157,10 @@ export default function Home() {
       <section className="mb-12">
         <h2 className="text-2xl font-semibold mb-4">Modal Component</h2>
         <div className="flex flex-wrap gap-4">
+          { /* @ts-ignore */}
           <ui-button onClick={() => setModalOpen(true)}>Open Modal</ui-button>
         </div>
-
+        { /* @ts-ignore */}
         <ui-modal open={modalOpen ? "true" : null} size="medium">
           <h3 slot="header">Modal Title</h3>
           <div>
@@ -140,11 +168,15 @@ export default function Home() {
             <p>You can close it by clicking the X button, clicking outside, or pressing ESC.</p>
           </div>
           <div slot="footer">
+            { /* @ts-ignore */}
             <ui-button variant="outline" onClick={() => setModalOpen(false)}>
               Cancel
+              { /* @ts-ignore */}
             </ui-button>
+            { /* @ts-ignore */}
             <ui-button onClick={() => setModalOpen(false)}>Confirm</ui-button>
           </div>
+          { /* @ts-ignore */}
         </ui-modal>
       </section>
 
@@ -152,24 +184,34 @@ export default function Home() {
       <section className="mb-12">
         <h2 className="text-2xl font-semibold mb-4">Tooltip Component</h2>
         <div className="flex flex-wrap gap-8 mb-4">
+          { /* @ts-ignore */}
           <ui-tooltip position="top" arrow-position="center">
+            { /* @ts-ignore */}
             <ui-button>Tooltip Top</ui-button>
             <span slot="content">This tooltip appears on top</span>
+            { /* @ts-ignore */}
           </ui-tooltip>
 
+          { /* @ts-ignore */}
           <ui-tooltip position="bottom" arrow-position="start">
+            { /* @ts-ignore */}
             <ui-button>Tooltip Bottom</ui-button>
             <span slot="content">This tooltip appears at the bottom with the arrow at the start</span>
+            { /* @ts-ignore */}
           </ui-tooltip>
-
+          { /* @ts-ignore */}
           <ui-tooltip position="left" arrow-position="end">
+            { /* @ts-ignore */}
             <ui-button>Tooltip Left</ui-button>
             <span slot="content">This tooltip appears on the left with the arrow at the end</span>
+            { /* @ts-ignore */}
           </ui-tooltip>
-
+          { /* @ts-ignore */}
           <ui-tooltip position="right" delay="500">
+            { /* @ts-ignore */}
             <ui-button>Tooltip Right (Delayed)</ui-button>
             <span slot="content">This tooltip appears on the right with a 500ms delay</span>
+            { /* @ts-ignore */}
           </ui-tooltip>
         </div>
       </section>
