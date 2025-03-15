@@ -23,7 +23,6 @@ const config: StorybookConfig = {
     },
   },
   docs: {
-    defaultName: "Web Components Library",
     autodocs: "tag",
   },
   staticDirs: ["../public"],
