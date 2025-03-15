@@ -49,6 +49,13 @@ const preview: Preview = {
         },
       },
     },
+    // Disable Next.js features in Storybook
+    nextjs: {
+      appDirectory: false,
+      navigation: {
+        pathname: "/",
+      },
+    },
   },
 }
 
