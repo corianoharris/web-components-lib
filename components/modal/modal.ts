@@ -284,6 +284,8 @@ export class ModalComponent extends HTMLElement {
 }
 
 
-  customElements.define("ui-modal", ModalComponent)
+if (!customElements.get("ui-modal")) {
+  customElements.define("ui-modal", ModalComponent);
+}
 
 
