@@ -1,20 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     eslint: {
-      ignoreDuringBuilds: true,
+        ignoreDuringBuilds: true,
     },
     typescript: {
-      ignoreBuildErrors: true,
+        ignoreBuildErrors: true,
     },
     images: {
-      unoptimized: true,
+        unoptimized: true,
     },
     experimental: {
-      webpackBuildWorker: true,
-      parallelServerBuildTraces: true,
-      parallelServerCompiles: true,
+        webpackBuildWorker: true,
+        parallelServerBuildTraces: true,
+        parallelServerCompiles: true,
     },
-  }
-  
-  export default nextConfig
-  
+}
+
+export default nextConfig
